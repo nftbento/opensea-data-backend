@@ -41,9 +41,7 @@ func NewBaseController(name string, db *models.DB, log *logrus.Logger, conf conf
 func SuccessResponse(c *gin.Context, data interface{}) {
 	c.JSON(
 		http.StatusOK,
-		gin.H{
-			"response": data,
-		},
+		data,
 	)
 }
 

@@ -26,3 +26,12 @@ func (db *DB) InsertActivity(activity *Activity) error {
 func (db *DB) BatchInsertActivity(activities []Activity) error {
 	return db.Create(activities).Error
 }
+
+func (db *DB) GetActivitiesAfter(occurred_after time.Time) ([]Activity, error) {
+	activities := []Activity{}
+	err := db.Where("tx_timestamp > ?", occurred_after).Find(&activities).Error
+	if err != nil {
+		return nil, err
+	}
+	return activities, nil
+}

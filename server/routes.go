@@ -20,6 +20,7 @@ func NewRouter(server *Server, conf config.Config) *gin.Engine {
 
 	v1 := r.Group("/v1")
 	WithAdminRoutes(v1, server, conf)
+	WithUnauthorizedRoutes(v1, server, conf)
 
 	return r
 }
@@ -30,6 +31,10 @@ func WithAdminRoutes(r *gin.RouterGroup, server *Server, conf config.Config) {
 	admin.Use(adminAuth())
 
 	admin.POST("/activity/recent", server.controller.acti.HandleActivityCreate)
+}
+
+func WithUnauthorizedRoutes(r *gin.RouterGroup, server *Server, conf config.Config) {
+	r.GET("/activity/summary", server.controller.acti.HandleGetActivitySummary)
 }
 
 func CORSMiddleware() gin.HandlerFunc {
