@@ -16,7 +16,9 @@ type Activity struct {
 	CollectionSlug        string    `json:"collection_slug"`
 	ContractAddress       string    `json:"contract_address"`
 	EventType             string    `json:"event_type"`
+	SellerAddress         string    `json:"seller_address"`
 	TransactionHash       string    `json:"transaction_hash"`
+	WinnerAddress         string    `json:"winner_address"`
 }
 
 func (db *DB) InsertActivity(activity *Activity) error {

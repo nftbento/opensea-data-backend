@@ -95,7 +95,9 @@ func (osvc *OpenseaService) GetRecentOpenseaEvents() ([]models.Activity, error) 
 			CollectionSlug:        ae.CollectionSlug,
 			ContractAddress:       ae.Asset.AssetContract.Address,
 			EventType:             ae.EventType,
+			SellerAddress:         ae.Seller.Address,
 			TransactionHash:       ae.Transaction.TransactionHash,
+			WinnerAddress:         ae.WinnerAccount.Address,
 		}
 		recentActivities = append(recentActivities, activity)
 	}
@@ -108,7 +110,9 @@ type ResponseBodyOpenseaEvents struct {
 
 type AssetEvent struct {
 	Asset          Asset       `json:"asset"`
+	Seller         Seller      `json:"seller"`
 	Transaction    Transaction `json:"transaction"`
+	WinnerAccount  Winner      `json:"winner_account"`
 	CollectionSlug string      `json:"collection_slug"`
 	EventType      string      `json:"event_type"`
 	TotalPrice     string      `json:"total_price"`
@@ -132,7 +136,15 @@ type Collection struct {
 	Name        string `json:"name"`
 }
 
+type Seller struct {
+	Address string `json:"address"`
+}
+
 type Transaction struct {
 	Timestamp       string `json:"timestamp"`
 	TransactionHash string `json:"transaction_hash"`
+}
+
+type Winner struct {
+	Address string `json:"address"`
 }
