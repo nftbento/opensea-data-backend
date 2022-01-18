@@ -21,7 +21,6 @@ func NewActivityController(bc *BaseController, osvc *opensea.OpenseaService) *Ac
 			Name: "activity",
 			DB:   bc.DB,
 			log:  bc.log,
-			conf: bc.conf,
 		},
 		osvc,
 	}

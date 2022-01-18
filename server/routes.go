@@ -5,13 +5,12 @@
 package server
 
 import (
-	"github.com/NFTActions/opensea-data-backend/config"
 	"github.com/NFTActions/opensea-data-backend/utils/ratelimit"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(server *Server, conf config.Config) *gin.Engine {
-	gin.SetMode(server.config.GinMode())
+func NewRouter(server *Server) *gin.Engine {
+	gin.SetMode("debug")
 	r := gin.Default()
 
 	r.Use(ratelimit.GinMiddleware())
@@ -19,13 +18,13 @@ func NewRouter(server *Server, conf config.Config) *gin.Engine {
 	r.GET("/ping", server.controller.base.HandlePing)
 
 	v1 := r.Group("/v1")
-	WithAdminRoutes(v1, server, conf)
-	WithUnauthorizedRoutes(v1, server, conf)
+	WithAdminRoutes(v1, server)
+	WithUnauthorizedRoutes(v1, server)
 
 	return r
 }
 
-func WithAdminRoutes(r *gin.RouterGroup, server *Server, conf config.Config) {
+func WithAdminRoutes(r *gin.RouterGroup, server *Server) {
 	//todo: config admin routes based on config
 	admin := r.Group("/admin")
 	admin.Use(adminAuth())
@@ -33,7 +32,7 @@ func WithAdminRoutes(r *gin.RouterGroup, server *Server, conf config.Config) {
 	admin.POST("/activity/recent", server.controller.acti.HandleActivityCreate)
 }
 
-func WithUnauthorizedRoutes(r *gin.RouterGroup, server *Server, conf config.Config) {
+func WithUnauthorizedRoutes(r *gin.RouterGroup, server *Server) {
 	r.GET("/activity/summary", server.controller.acti.HandleGetActivitySummary)
 }
 

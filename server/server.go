@@ -10,14 +10,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/NFTActions/opensea-data-backend/config"
 	"github.com/NFTActions/opensea-data-backend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
-	config     *config.Config
 	db         *models.DB
 	log        *logrus.Logger
 	router     *gin.Engine
@@ -27,19 +25,18 @@ type Server struct {
 
 func CreateServer() *http.Server {
 
-	conf, err := config.NewConfig()
-	if err != nil {
-		panic("error reading config, " + err.Error())
-	}
-
+	/*
+	 configure Logger
+	*/
 	log := logrus.New()
 	log.Out = os.Stdout
-	log.Level = conf.LogLevel()
+	log.Level = 4 // Info
 
-	if conf.LogFileLocation() == "" {
-		log.Fatal("missing log_file_location config variable")
+	LOG_FILE_LOCATION, exists := os.LookupEnv("LOG_FILE_LOCATION")
+	if !exists {
+		log.Fatal("missing LOG_FILE_LOCATION environment variable")
 	}
-	logfile, err := os.OpenFile(conf.LogFileLocation(), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logfile, err := os.OpenFile(LOG_FILE_LOCATION, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatal("failed to open file for logging")
 	} else {
@@ -50,17 +47,28 @@ func CreateServer() *http.Server {
 	/*
 	 configure Database
 	*/
-	cred := conf.DBCredentials()
-	db := models.NewDB(cred[0], cred[1], log)
-
-	if err := db.Connect(); err != nil {
-		log.Fatal("db connection failed", err)
+	db_type, exists := os.LookupEnv("DB_TYPE")
+	if !exists {
+		log.Fatal("missing DB_TYPE environment variable")
 	}
+	db_path, exists := os.LookupEnv("DB_PATH")
+	if !exists {
+		log.Fatal("missing DB_PATH environment variable")
+	}
+	db := models.NewDB(db_type, db_path, log)
+	if err := db.Connect(); err != nil {
+		log.Fatal("db connection failed: ", err)
+	}
+
+	// conf, err := config.NewConfig()
+	// if err != nil {
+	// 	panic("error reading config, " + err.Error())
+	// }
 
 	/*
 		Initialize Server
 	*/
-	svr := NewServer(conf, db, log)
+	svr := NewServer(db, log)
 
 	/*
 		Initialize Services
@@ -75,13 +83,13 @@ func CreateServer() *http.Server {
 	/*
 		Initialize Router
 	*/
-	svr.router = NewRouter(svr, *conf)
+	svr.router = NewRouter(svr)
 
 	/*
 		Start HTTP Server
 	*/
 	// initialize server
-	addr := fmt.Sprintf("%s:%d", "0.0.0.0", conf.HTTPPort())
+	addr := fmt.Sprintf("%s:%d", "0.0.0.0", 8080)
 	httpServer := makeHttpServer(addr, svr.router)
 
 	//todo: make socket server available for notification
@@ -92,11 +100,10 @@ func CreateServer() *http.Server {
 	return httpServer
 }
 
-func NewServer(conf *config.Config, db *models.DB, log *logrus.Logger) *Server {
+func NewServer(db *models.DB, log *logrus.Logger) *Server {
 	return &Server{
-		config: conf,
-		db:     db,
-		log:    log,
+		db:  db,
+		log: log,
 	}
 }
 
