@@ -36,7 +36,7 @@ func CreateServer() *http.Server {
 	if !exists {
 		log.Fatal("missing LOG_FILE_LOCATION environment variable")
 	}
-	logfile, err := os.OpenFile(LOG_FILE_LOCATION, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logfile, err := os.OpenFile(LOG_FILE_LOCATION, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0755)
 	if err != nil {
 		log.Fatal("failed to open file for logging")
 	} else {
