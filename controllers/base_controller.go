@@ -7,7 +7,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/NFTActions/opensea-data-backend/config"
 	"github.com/NFTActions/opensea-data-backend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -25,16 +24,14 @@ type BaseController struct {
 	Name string
 	DB   *models.DB
 
-	log  *logrus.Entry
-	conf config.Config
+	log *logrus.Entry
 }
 
-func NewBaseController(name string, db *models.DB, log *logrus.Logger, conf config.Config) *BaseController {
+func NewBaseController(name string, db *models.DB, log *logrus.Logger) *BaseController {
 	return &BaseController{
 		name,
 		db,
 		log.WithField("controller", name),
-		conf,
 	}
 }
 

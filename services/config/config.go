@@ -15,7 +15,7 @@ type AdminConfig struct {
 	quit chan int
 }
 
-func NewService(db *models.DB, logger *logrus.Logger) *AdminConfig {
+func NewAdminConfig(db *models.DB, logger *logrus.Logger) *AdminConfig {
 	s := &AdminConfig{
 		DB:  db,
 		log: logger,

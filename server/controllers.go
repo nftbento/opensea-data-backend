@@ -21,7 +21,7 @@ type Controller struct {
 func (server *Server) NewService() []io.Closer {
 	var service Service
 
-	service.config = config.NewService(server.db, server.log)
+	service.config = config.NewAdminConfig(server.db, server.log)
 	service.osvc = opensea.NewOpenseaService(server.db, server.log, service.config)
 
 	// add all service that need to be closed
@@ -32,7 +32,7 @@ func (server *Server) NewService() []io.Closer {
 
 func (server Server) NewController() *Controller {
 	var controller Controller
-	controller.base = controllers.NewBaseController("base", server.db, server.log, *server.config)
+	controller.base = controllers.NewBaseController("base", server.db, server.log)
 	controller.acti = controllers.NewActivityController(controller.base, server.service.osvc)
 	return &controller
 }
