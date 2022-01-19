@@ -34,6 +34,14 @@ func CreateServer() *http.Server {
 	log.Formatter = &logrus.JSONFormatter{}
 
 	/*
+	 configure port
+	*/
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT must be set")
+	}
+
+	/*
 	 configure Database
 	*/
 	db_type, exists := os.LookupEnv("DB_TYPE")
@@ -73,7 +81,7 @@ func CreateServer() *http.Server {
 		Start HTTP Server
 	*/
 	// initialize server
-	addr := fmt.Sprintf("%s:%d", "0.0.0.0", 8080)
+	addr := fmt.Sprintf("%s:%s", "0.0.0.0", port)
 	httpServer := makeHttpServer(addr, svr.router)
 
 	//todo: make socket server available for notification

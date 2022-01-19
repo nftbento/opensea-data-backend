@@ -21,3 +21,4 @@
 /target
 playground.go
 *.log
+.env

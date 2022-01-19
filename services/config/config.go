@@ -1,8 +1,6 @@
 package config
 
 import (
-	"time"
-
 	"github.com/NFTActions/opensea-data-backend/models"
 	"github.com/sirupsen/logrus"
 )
@@ -23,20 +21,20 @@ func NewAdminConfig(db *models.DB, logger *logrus.Logger) *AdminConfig {
 
 	s.updateConf()
 
-	ticker := time.NewTicker(5 * time.Minute)
-	quit := make(chan int)
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				s.updateConf()
-			case <-quit:
-				ticker.Stop()
-				return
-			}
-		}
-	}()
-	s.quit = quit
+	// ticker := time.NewTicker(5 * time.Minute)
+	// quit := make(chan int)
+	// go func() {
+	// 	for {
+	// 		select {
+	// 		case <-ticker.C:
+	// 			s.updateConf()
+	// 		case <-quit:
+	// 			ticker.Stop()
+	// 			return
+	// 		}
+	// 	}
+	// }()
+	// s.quit = quit
 	return s
 }
 
