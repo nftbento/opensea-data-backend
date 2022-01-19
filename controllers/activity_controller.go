@@ -20,7 +20,7 @@ func NewActivityController(bc *BaseController, osvc *opensea.OpenseaService) *Ac
 		BaseController{
 			Name: "activity",
 			DB:   bc.DB,
-			log:  bc.log,
+			log:  bc.log.WithField("controller", "activity"),
 		},
 		osvc,
 	}
@@ -29,6 +29,7 @@ func NewActivityController(bc *BaseController, osvc *opensea.OpenseaService) *Ac
 func (ac *ActivityController) HandleActivityCreate(c *gin.Context) {
 	recentActivities, err := ac.osvc.GetRecentOpenseaEvents()
 	if err != nil {
+		ac.log.Errorf("Error in GetRecentOpenseaEvents: %s", err.Error())
 		InternalErrorResponse(c, "error in GetRecentEvents", err.Error())
 		return
 	}
@@ -36,6 +37,7 @@ func (ac *ActivityController) HandleActivityCreate(c *gin.Context) {
 	if len(recentActivities) > 0 {
 		err = ac.DB.BatchInsertActivity(recentActivities)
 		if err != nil {
+			ac.log.Errorf("Error in BatchInsertActivity: %s", err.Error())
 			InternalErrorResponse(c, "error in BatchInsert", err.Error())
 			return
 		}
@@ -50,12 +52,14 @@ func (ac *ActivityController) HandleGetActivitySummary(c *gin.Context) {
 	periodString := c.DefaultQuery("period", "60")
 	period, err := strconv.Atoi(periodString)
 	if err != nil {
+		ac.log.Errorf("Error in parse period in query string: %s", err.Error())
 		BadRequestResponse(c, "period parameter is wrong", err.Error())
 		return
 	}
 
 	activities, err := ac.DB.GetActivitiesAfter(time.Now().Add(-time.Duration(period) * time.Minute))
 	if err != nil {
+		ac.log.Errorf("Error in GetActivitiesAfter: %s", err.Error())
 		InternalErrorResponse(c, "error in GetActivitiesAfter", err.Error())
 		return
 	}
