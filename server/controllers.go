@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+	"github.com/robfig/cron/v3"
 	"io"
 
 	"github.com/NFTActions/opensea-data-backend/controllers"
@@ -24,10 +26,27 @@ func (server *Server) NewService() []io.Closer {
 	service.config = config.NewAdminConfig(server.db, server.log)
 	service.osvc = opensea.NewOpenseaService(server.db, server.log, service.config)
 
+	StartJob(service.osvc)
+
 	// add all service that need to be closed
 	toClose := []io.Closer{}
 	server.service = &service
 	return toClose
+}
+
+func StartJob(osvc *opensea.OpenseaService) {
+	job := cron.New()
+	_, err := job.AddFunc("* * * * *", func() {
+		_, err := osvc.GetRecentOpenseaEvents()
+		if err != nil {
+			fmt.Errorf("error when running job:%s", err)
+			return
+		}
+	})
+	if err != nil {
+		return
+	}
+	job.Start()
 }
 
 func (server Server) NewController() *Controller {
