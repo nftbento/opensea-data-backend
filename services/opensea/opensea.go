@@ -32,8 +32,8 @@ func NewOpenseaService(db *models.DB, log *logrus.Logger, adminConfig *config.Ad
 
 func (osvc *OpenseaService) GetRecentOpenseaEvents() ([]models.Activity, error) {
 	unixNow := time.Now().Unix()
-	occurred_before := unixNow - unixNow%600
-	occurred_after := occurred_before - 600
+	occurred_before := unixNow - unixNow%60
+	occurred_after := occurred_before - 60
 	requestURL := fmt.Sprintf("%s/events?event_type=successful&occurred_after=%d&occurred_before=%d&limit=100",
 		osvc.conf.GetConfig().OpenseaUrl, occurred_after, occurred_before)
 	log.Println(requestURL)
