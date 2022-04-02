@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/NFTActions/opensea-data-backend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"opensea-data-backend/models"
 )
 
 type Server struct {

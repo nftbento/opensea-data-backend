@@ -1,4 +1,4 @@
-module github.com/NFTActions/opensea-data-backend
+module opensea-data-backend
 
 // +heroku goVersion go1.16.10
 go 1.16

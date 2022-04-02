@@ -5,9 +5,9 @@ import (
 	"github.com/robfig/cron/v3"
 	"io"
 
-	"github.com/NFTActions/opensea-data-backend/controllers"
-	"github.com/NFTActions/opensea-data-backend/services/config"
-	"github.com/NFTActions/opensea-data-backend/services/opensea"
+	"opensea-data-backend/controllers"
+	"opensea-data-backend/services/config"
+	"opensea-data-backend/services/opensea"
 )
 
 type Service struct {

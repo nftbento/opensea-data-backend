@@ -7,9 +7,9 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/NFTActions/opensea-data-backend/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"opensea-data-backend/models"
 )
 
 const (

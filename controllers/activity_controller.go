@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/NFTActions/opensea-data-backend/models"
-	"github.com/NFTActions/opensea-data-backend/services/opensea"
 	"github.com/gin-gonic/gin"
+	"opensea-data-backend/models"
+	"opensea-data-backend/services/opensea"
 )
 
 type ActivityController struct {

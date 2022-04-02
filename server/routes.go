@@ -5,8 +5,8 @@
 package server
 
 import (
-	"github.com/NFTActions/opensea-data-backend/utils/ratelimit"
 	"github.com/gin-gonic/gin"
+	"opensea-data-backend/utils/ratelimit"
 )
 
 func NewRouter(server *Server) *gin.Engine {

@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/NFTActions/opensea-data-backend/models"
-	"github.com/NFTActions/opensea-data-backend/services/config"
-	"github.com/NFTActions/opensea-data-backend/utils/conversion"
 	"github.com/sirupsen/logrus"
+	"opensea-data-backend/models"
+	"opensea-data-backend/services/config"
+	"opensea-data-backend/utils/conversion"
 )
 
 type OpenseaService struct {
