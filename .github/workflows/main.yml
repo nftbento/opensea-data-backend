@@ -1,0 +1,15 @@
+name: POST sync request
+
+on:
+  schedule: 
+  - cron: '*/10 * * * *'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      - name: cURL request
+        run: curl -X POST https://larry:larrykey@opensea-data-backend.herokuapp.com/v1/admin/activity/recent
