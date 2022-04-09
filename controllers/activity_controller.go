@@ -5,9 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"opensea-data-backend/models"
 	"opensea-data-backend/services/opensea"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ActivityController struct {
@@ -83,17 +84,22 @@ func (ac *ActivityController) HandleGetActivitySummary(c *gin.Context) {
 
 func GetCollectionMap(activities []models.Activity) map[string]Collection {
 	collectionMap := make(map[string]Collection, 0)
+	buyerExists := make(map[string]map[string]bool, 0)
 	for _, a := range activities {
 		// First we get a "copy" of the entry
 		if entry, ok := collectionMap[a.CollectionSlug]; ok {
 			// Then we modify the copy
 			entry.Count += 1
 			entry.TotalSalesInGwei += a.TotalPrice
-
+			if _, ok := buyerExists[a.CollectionSlug][a.WinnerAddress]; !ok {
+				entry.DistinctBuyers += 1
+				buyerExists[a.CollectionSlug][a.WinnerAddress] = true
+			}
 			// Then we reassign map entry
 			collectionMap[a.CollectionSlug] = entry
 		} else {
 			newCollection := Collection{
+				DistinctBuyers:   1,
 				Name:             a.CollectionName,
 				Count:            1,
 				TotalSalesInGwei: a.TotalPrice,
@@ -101,7 +107,10 @@ func GetCollectionMap(activities []models.Activity) map[string]Collection {
 				CreatedDate:      a.CollectionCreatedDate,
 			}
 			collectionMap[a.CollectionSlug] = newCollection
+			buyerExists[a.CollectionSlug] = make(map[string]bool, 0)
+			buyerExists[a.CollectionSlug][a.WinnerAddress] = true
 		}
+
 	}
 	return collectionMap
 }
@@ -112,4 +121,5 @@ type Collection struct {
 	TotalSalesInGwei int64     `json:"total_sales_in_gwei"`
 	ImageUrl         string    `json:"image_url"`
 	CreatedDate      time.Time `json:"created_date"`
+	DistinctBuyers   int       `json:"distinct_buyers"`
 }
