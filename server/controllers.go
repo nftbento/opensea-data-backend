@@ -2,8 +2,9 @@ package server
 
 import (
 	"fmt"
-	"github.com/robfig/cron/v3"
 	"io"
+
+	"github.com/robfig/cron/v3"
 
 	"opensea-data-backend/controllers"
 	"opensea-data-backend/services/config"
@@ -26,7 +27,7 @@ func (server *Server) NewService() []io.Closer {
 	service.config = config.NewAdminConfig(server.db, server.log)
 	service.osvc = opensea.NewOpenseaService(server.db, server.log, service.config)
 
-	StartJob(service.osvc)
+	server.StartJob(service.osvc)
 
 	// add all service that need to be closed
 	toClose := []io.Closer{}
@@ -34,13 +35,22 @@ func (server *Server) NewService() []io.Closer {
 	return toClose
 }
 
-func StartJob(osvc *opensea.OpenseaService) {
+func (server *Server) StartJob(osvc *opensea.OpenseaService) {
 	job := cron.New()
 	_, err := job.AddFunc("* * * * *", func() {
-		_, err := osvc.GetRecentOpenseaEvents()
+		fmt.Println("Running job")
+		recentActivities, err := osvc.GetRecentOpenseaEvents()
 		if err != nil {
 			fmt.Errorf("error when running job:%s", err)
 			return
+		}
+
+		if len(recentActivities) > 0 {
+			err = server.db.BatchInsertActivity(recentActivities)
+			if err != nil {
+				fmt.Errorf("Error in BatchInsertActivity: %s", err.Error())
+				return
+			}
 		}
 	})
 	if err != nil {
